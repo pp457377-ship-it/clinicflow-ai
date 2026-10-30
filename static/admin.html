@@ -1,0 +1,62 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>ClinicFlow AI - Staff Dashboard</title>
+  <link rel="icon" href="data:image/svg+xml,<svg xmlns=%22http://www.w3.org/2000/svg%22 viewBox=%220 0 100 100%22><rect width=%22100%22 height=%22100%22 rx=%2220%22 fill=%22%230f766e%22/><path d=%22M40 20h20v20h20v20H60v20H40V60H20V40h20z%22 fill=%22white%22/></svg>" />
+  <link rel="stylesheet" href="/static/styles.css" />
+</head>
+<body>
+<header>
+  <div class="bar">
+    <div><h1>ClinicFlow AI - Staff Dashboard</h1><p>AI-prioritised patient queue</p></div>
+    <div><a href="/">Patient intake</a> &nbsp; <a href="#" id="logout" class="hidden">Log out</a></div>
+  </div>
+</header>
+<main class="wide">
+  <section class="card" id="login-section" style="max-width:420px;margin:40px auto">
+    <h2>Staff login</h2>
+    <form id="login-form">
+      <label for="password">Admin password</label>
+      <input id="password" type="password" required autocomplete="current-password" />
+      <div id="login-error" class="alert error hidden"></div>
+      <p><button type="submit">Log in</button></p>
+      <p class="disclaimer">Demo password is set with the ADMIN_PASSWORD environment variable (default: admin123).</p>
+    </form>
+  </section>
+
+  <section id="dashboard" class="hidden">
+    <div class="stats">
+      <div class="stat"><div class="n" id="s-total">0</div><div class="l">Total intakes</div></div>
+      <div class="stat"><div class="n" id="s-emergency" style="color:var(--red)">0</div><div class="l">Emergency</div></div>
+      <div class="stat"><div class="n" id="s-urgent" style="color:var(--amber)">0</div><div class="l">Urgent</div></div>
+      <div class="stat"><div class="n" id="s-routine" style="color:var(--green)">0</div><div class="l">Routine</div></div>
+      <div class="stat"><div class="n" id="s-booked">0</div><div class="l">Appointments booked</div></div>
+    </div>
+    <div class="card">
+      <div style="display:flex;justify-content:space-between;align-items:center">
+        <h2 style="margin:0">Patient queue (sorted by AI urgency)</h2>
+        <button class="secondary" id="refresh">Refresh</button>
+      </div>
+      <div style="overflow-x:auto">
+        <table>
+          <thead><tr><th>#</th><th>Urgency</th><th>Patient</th><th>AI summary</th><th>Appointment</th><th>Status</th></tr></thead>
+          <tbody id="queue"></tbody>
+        </table>
+      </div>
+      <p id="empty" class="disclaimer hidden">No intakes yet. Submit one from the patient page.</p>
+    </div>
+  </section>
+</main>
+
+<div class="modal-bg hidden" id="modal-bg">
+  <div class="modal">
+    <h2 id="m-title"></h2>
+    <div class="kv" id="m-body"></div>
+    <p style="margin-top:18px"><button class="secondary" id="m-close">Close</button></p>
+  </div>
+</div>
+<script src="/static/admin.js"></script>
+</body>
+</html>

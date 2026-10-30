@@ -1,0 +1,101 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>ClinicFlow AI - Smart Patient Intake</title>
+  <link rel="icon" href="data:image/svg+xml,<svg xmlns=%22http://www.w3.org/2000/svg%22 viewBox=%220 0 100 100%22><rect width=%22100%22 height=%22100%22 rx=%2220%22 fill=%22%230f766e%22/><path d=%22M40 20h20v20h20v20H60v20H40V60H20V40h20z%22 fill=%22white%22/></svg>" />
+  <link rel="stylesheet" href="/static/styles.css" />
+</head>
+<body>
+<header>
+  <div class="bar">
+    <div>
+      <h1>ClinicFlow AI</h1>
+      <p id="clinic-name">Smart patient intake &amp; booking</p>
+    </div>
+    <div><span class="badge-ai" id="ai-badge">AI: ...</span> &nbsp; <a href="/admin">Staff dashboard</a></div>
+  </div>
+</header>
+
+<main>
+  <div class="steps">
+    <span id="step-1" class="active">1. Describe symptoms</span>
+    <span id="step-2">2. AI assessment</span>
+    <span id="step-3">3. Book appointment</span>
+  </div>
+
+  <!-- Step 1: intake form -->
+  <section class="card" id="intake-section">
+    <h2>Tell us how you're feeling</h2>
+    <form id="intake-form" novalidate>
+      <div class="row">
+        <div><label for="patient_name">Full name</label><input id="patient_name" required minlength="2" maxlength="80" /></div>
+        <div><label for="phone">Mobile number</label><input id="phone" required placeholder="04xx xxx xxx" maxlength="20" /></div>
+      </div>
+      <div class="row">
+        <div><label for="age">Age</label><input id="age" type="number" min="0" max="120" required /></div>
+        <div>
+          <label for="gender">Sex</label>
+          <select id="gender">
+            <option value="prefer_not_to_say">Prefer not to say</option>
+            <option value="female">Female</option>
+            <option value="male">Male</option>
+            <option value="other">Other</option>
+          </select>
+        </div>
+      </div>
+      <label for="email">Email (optional)</label><input id="email" type="email" maxlength="120" />
+      <label for="symptoms">Describe your symptoms in your own words</label>
+      <textarea id="symptoms" required minlength="5" maxlength="2000" placeholder="e.g. I've had a sore throat and fever since Monday..."></textarea>
+      <div class="examples" aria-label="Example symptoms">
+        <span class="disclaimer" style="margin:0">Try an example:</span>
+        <button type="button" data-example="routine">Mild cold</button>
+        <button type="button" data-example="urgent">High fever</button>
+        <button type="button" data-example="long">Anxiety &amp; sleep</button>
+        <button type="button" data-example="emergency">Chest pain</button>
+      </div>
+      <label for="duration">How long have you had these symptoms?</label>
+      <input id="duration" maxlength="100" placeholder="e.g. 3 days" />
+      <div id="form-error" class="alert error hidden"></div>
+      <p><button type="submit" id="submit-btn">Analyse my symptoms</button></p>
+    </form>
+    <p class="disclaimer">ClinicFlow AI does not diagnose. It prepares a summary for your doctor and helps you book the right
+      appointment. <b>In an emergency, call 000.</b></p>
+  </section>
+
+  <!-- Step 2: AI result -->
+  <section class="card hidden" id="result-section">
+    <h2>Your assessment <span id="urgency-badge" class="urgency"></span></h2>
+    <div id="emergency-alert" class="alert danger hidden"></div>
+    <div class="alert info" id="patient-message"></div>
+    <details open>
+      <summary><b>Summary shared with your doctor</b></summary>
+      <div class="kv" style="margin-top:12px">
+        <b>Clinical summary</b><span id="r-summary"></span>
+        <b>Key symptoms</b><span id="r-symptoms"></span>
+        <b>Suggested visit</b><span id="r-appointment"></span>
+        <b>Doctor may ask</b><span id="r-questions"></span>
+        <b>Analysed by</b><span id="r-provider"></span>
+      </div>
+    </details>
+  </section>
+
+  <!-- Step 3: booking -->
+  <section class="card hidden" id="booking-section">
+    <h2>Choose a time</h2>
+    <div id="slots" class="slots"></div>
+    <div id="booking-error" class="alert error hidden"></div>
+    <p><button id="book-btn" disabled>Confirm booking</button></p>
+  </section>
+
+  <section class="card hidden" id="confirm-section">
+    <h2>Booking confirmed</h2>
+    <div class="alert info" id="confirm-message"></div>
+    <button class="secondary" onclick="location.reload()">Start a new intake</button>
+  </section>
+</main>
+<footer>ClinicFlow AI demo &middot; Not a medical device &middot; Built with Python, FastAPI and Generative AI</footer>
+<script src="/static/app.js"></script>
+</body>
+</html>
