@@ -11,18 +11,19 @@
 <header>
   <div class="bar">
     <div><h1>ClinicFlow AI - Staff Dashboard</h1><p>AI-prioritised patient queue</p></div>
-    <div><a href="/">Patient intake</a> &nbsp; <a href="#" id="logout" class="hidden">Log out</a></div>
+    <div><a href="/">Patient intake</a> &nbsp; <span id="who" class="hidden"></span> &nbsp; <a href="#" id="logout" class="hidden">Log out</a></div>
   </div>
 </header>
 <main class="wide">
   <section class="card" id="login-section" style="max-width:420px;margin:40px auto">
     <h2>Staff login</h2>
     <form id="login-form">
-      <label for="password">Admin password</label>
+      <label for="username">Username</label>
+      <input id="username" required autocomplete="username" />
+      <label for="password">Password</label>
       <input id="password" type="password" required autocomplete="current-password" />
       <div id="login-error" class="alert error hidden"></div>
       <p><button type="submit">Log in</button></p>
-      <p class="disclaimer">Demo password is set with the ADMIN_PASSWORD environment variable (default: admin123).</p>
     </form>
   </section>
 
@@ -35,17 +36,43 @@
       <div class="stat"><div class="n" id="s-booked">0</div><div class="l">Appointments booked</div></div>
     </div>
     <div class="card">
-      <div style="display:flex;justify-content:space-between;align-items:center">
+      <div style="display:flex;justify-content:space-between;align-items:center;gap:10px;flex-wrap:wrap">
         <h2 style="margin:0">Patient queue (sorted by AI urgency)</h2>
-        <button class="secondary" id="refresh">Refresh</button>
+        <div>
+          <button id="add-patient">Add patient</button>
+          <button class="secondary" id="refresh">Refresh</button>
+        </div>
       </div>
       <div style="overflow-x:auto">
         <table>
-          <thead><tr><th>#</th><th>Urgency</th><th>Patient</th><th>AI summary</th><th>Appointment</th><th>Status</th></tr></thead>
+          <thead><tr><th>#</th><th>Urgency</th><th>Patient</th><th>AI summary</th><th>Appointment</th><th>Status</th><th>Actions</th></tr></thead>
           <tbody id="queue"></tbody>
         </table>
       </div>
       <p id="empty" class="disclaimer hidden">No intakes yet. Submit one from the patient page.</p>
+    </div>
+
+    <div class="card">
+      <h2>Staff accounts</h2>
+      <div id="admin-list" style="margin-bottom:14px"></div>
+      <h3 style="font-size:1rem;margin:18px 0 4px">Add an account</h3>
+      <form id="add-admin-form">
+        <div class="row">
+          <div><label for="a-username">Username</label><input id="a-username" required minlength="3" maxlength="50" autocomplete="off" /></div>
+          <div><label for="a-password">Password (min 8 chars)</label><input id="a-password" type="password" required minlength="8" maxlength="128" autocomplete="new-password" /></div>
+        </div>
+        <div id="admin-msg" class="alert hidden"></div>
+        <p><button type="submit">Create account</button></p>
+      </form>
+      <h3 style="font-size:1rem;margin:18px 0 4px">Change my password</h3>
+      <form id="pw-form">
+        <div class="row">
+          <div><label for="pw-current">Current password</label><input id="pw-current" type="password" required autocomplete="current-password" /></div>
+          <div><label for="pw-new">New password (min 8 chars)</label><input id="pw-new" type="password" required minlength="8" maxlength="128" autocomplete="new-password" /></div>
+        </div>
+        <div id="pw-msg" class="alert hidden"></div>
+        <p><button type="submit">Update password</button></p>
+      </form>
     </div>
   </section>
 </main>
@@ -54,7 +81,42 @@
   <div class="modal">
     <h2 id="m-title"></h2>
     <div class="kv" id="m-body"></div>
-    <p style="margin-top:18px"><button class="secondary" id="m-close">Close</button></p>
+    <form id="m-form" class="hidden">
+      <div class="row">
+        <div><label for="e-name">Full name</label><input id="e-name" required minlength="2" maxlength="80" /></div>
+        <div><label for="e-phone">Mobile number</label><input id="e-phone" required maxlength="20" /></div>
+      </div>
+      <div class="row">
+        <div><label for="e-age">Age</label><input id="e-age" type="number" min="0" max="120" required /></div>
+        <div>
+          <label for="e-gender">Sex</label>
+          <select id="e-gender">
+            <option value="prefer_not_to_say">Prefer not to say</option>
+            <option value="female">Female</option>
+            <option value="male">Male</option>
+            <option value="other">Other</option>
+          </select>
+        </div>
+      </div>
+      <label for="e-email">Email (optional)</label><input id="e-email" type="email" maxlength="120" />
+      <label for="e-symptoms">Symptoms</label><textarea id="e-symptoms" required minlength="5" maxlength="2000"></textarea>
+      <label for="e-duration">Duration</label><input id="e-duration" maxlength="100" />
+      <label for="e-status" id="e-status-label">Status</label>
+      <select id="e-status">
+        <option>new</option><option>booked</option><option>reviewed</option><option>closed</option>
+      </select>
+      <div id="m-error" class="alert error hidden"></div>
+      <p style="margin-top:18px">
+        <button type="submit" id="m-save">Save</button>
+        <button type="button" class="secondary" id="m-cancel">Cancel</button>
+      </p>
+    </form>
+    <p style="margin-top:18px" id="m-actions">
+      <button id="m-confirmbtn" class="hidden">Confirm &amp; email patient</button>
+      <button class="secondary" id="m-editbtn">Edit</button>
+      <button class="danger" id="m-deletebtn">Delete</button>
+      <button class="secondary" id="m-close">Close</button>
+    </p>
   </div>
 </div>
 <script src="/static/admin.js"></script>

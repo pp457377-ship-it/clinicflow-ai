@@ -48,13 +48,6 @@
       <label for="email">Email (optional)</label><input id="email" type="email" maxlength="120" />
       <label for="symptoms">Describe your symptoms in your own words</label>
       <textarea id="symptoms" required minlength="5" maxlength="2000" placeholder="e.g. I've had a sore throat and fever since Monday..."></textarea>
-      <div class="examples" aria-label="Example symptoms">
-        <span class="disclaimer" style="margin:0">Try an example:</span>
-        <button type="button" data-example="routine">Mild cold</button>
-        <button type="button" data-example="urgent">High fever</button>
-        <button type="button" data-example="long">Anxiety &amp; sleep</button>
-        <button type="button" data-example="emergency">Chest pain</button>
-      </div>
       <label for="duration">How long have you had these symptoms?</label>
       <input id="duration" maxlength="100" placeholder="e.g. 3 days" />
       <div id="form-error" class="alert error hidden"></div>
@@ -81,6 +74,15 @@
     </details>
   </section>
 
+  <!-- Step 2.5: AI follow-up questions -->
+  <section class="card hidden" id="followup-section">
+    <h2>A few quick questions from our AI</h2>
+    <p class="disclaimer" style="margin-top:0">Your answers help the doctor prepare and let the AI refine your assessment.</p>
+    <div id="fq-list"></div>
+    <div id="fq-error" class="alert error hidden"></div>
+    <p><button id="fq-submit">Submit answers</button> <button class="secondary" id="fq-skip">Skip and continue</button></p>
+  </section>
+
   <!-- Step 3: booking -->
   <section class="card hidden" id="booking-section">
     <h2>Choose a time</h2>
@@ -95,7 +97,7 @@
     <button class="secondary" onclick="location.reload()">Start a new intake</button>
   </section>
 </main>
-<footer>ClinicFlow AI demo &middot; Not a medical device &middot; Built with Python, FastAPI and Generative AI</footer>
+<footer>ClinicFlow AI &middot; Intelligent patient intake and triage</footer>
 <script src="/static/app.js"></script>
 </body>
 </html>

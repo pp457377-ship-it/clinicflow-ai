@@ -22,6 +22,12 @@ class Settings:
     database_path: str
     clinic_name: str
     clinic_timezone: str
+    smtp_host: str
+    smtp_port: int
+    smtp_user: str
+    smtp_password: str
+    smtp_from: str
+    smtp_tls: bool
 
     @property
     def active_provider(self) -> str:
@@ -51,6 +57,12 @@ def get_settings() -> Settings:
         ai_timeout_seconds=float(os.getenv("AI_TIMEOUT_SECONDS", "20")),
         admin_password=os.getenv("ADMIN_PASSWORD", "admin123"),
         database_path=os.getenv("DATABASE_PATH", "data/clinicflow.db"),
-        clinic_name=os.getenv("CLINIC_NAME", "Robina 7 Day Doctors (Demo)"),
+        clinic_name=os.getenv("CLINIC_NAME", "Robina 7 Day Doctors"),
         clinic_timezone=os.getenv("CLINIC_TIMEZONE", "Australia/Brisbane"),
+        smtp_host=os.getenv("SMTP_HOST", ""),
+        smtp_port=int(os.getenv("SMTP_PORT", "587")),
+        smtp_user=os.getenv("SMTP_USER", ""),
+        smtp_password=os.getenv("SMTP_PASSWORD", ""),
+        smtp_from=os.getenv("SMTP_FROM", ""),
+        smtp_tls=os.getenv("SMTP_TLS", "true").lower() != "false",
     )

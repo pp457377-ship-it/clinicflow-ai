@@ -141,6 +141,10 @@ def offline_analyze(intake: IntakeRequest) -> TriageResult:
     questions = [q for key, q in QUESTION_BANK.items() if key in text][:3]
     questions.append("Any relevant medical history, current medicines or allergies?")
 
+    follow_ups = [q for key, q in QUESTION_BANK.items() if key in text][:2]
+    follow_ups.append("Is it getting better, getting worse or staying the same?")
+    follow_ups = follow_ups[:3]
+
     sex = {"female": "female", "male": "male"}.get(intake.gender, "patient")
     duration = intake.duration.strip() or "unspecified duration"
     summary = f"{intake.age}-year-old {sex} presenting with {', '.join(symptoms)} ({duration})."
@@ -159,6 +163,7 @@ def offline_analyze(intake: IntakeRequest) -> TriageResult:
         red_flags=[],
         suggested_appointment=appointment,
         questions_for_doctor=questions,
+        follow_up_questions=follow_ups,
         patient_message=messages[urgency],
         ai_provider="offline",
     )

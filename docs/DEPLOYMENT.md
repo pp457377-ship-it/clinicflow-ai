@@ -9,10 +9,10 @@ cp .env.example .env               # Windows: copy .env.example .env
 # optional: paste a free Gemini key into .env -> GEMINI_API_KEY=...
 uvicorn app.main:app --reload
 ```
-Open http://localhost:8000 (patient), http://localhost:8000/admin (staff, password from `ADMIN_PASSWORD`),
+Open http://localhost:8000 (patient), http://localhost:8000/admin (staff - log in as `admin` / `ADMIN_PASSWORD`),
 http://localhost:8000/docs (API docs).
 
-Without a key the app runs in **offline demo mode** (rule engine). With a key the header shows `AI: gemini (prompt v3)`.
+Without a key the app runs in **offline mode** (rule engine). With a key the header shows `AI: gemini (prompt v3)`.
 
 Get a free Gemini key: https://aistudio.google.com/app/apikey
 
@@ -30,14 +30,14 @@ Data is kept in the `clinicflow-data` Docker volume.
    git push -u origin main
    ```
 2. Go to https://dashboard.render.com -> **New +** -> **Blueprint** -> pick the repo. Render reads `render.yaml`.
-3. When asked, paste your `GEMINI_API_KEY`. `ADMIN_PASSWORD` is generated automatically - copy it from the
-   service's **Environment** tab.
+3. When asked, paste your `GEMINI_API_KEY`. `ADMIN_PASSWORD` (initial password for the `admin` staff account) is
+   generated automatically - copy it from the service's **Environment** tab, then change it in the dashboard.
 4. Wait for the build (about 3 min). Your link looks like `https://clinicflow-ai-xxxx.onrender.com`.
 5. Check `https://<your-url>/api/health` returns `{"status":"ok"}`.
 
 Notes: the free plan sleeps after 15 min idle (first request takes ~30-50 s to wake up), and its disk is not
-persistent, so the SQLite demo data resets on redeploy. That is fine for a demo. For production, add a Render disk
-mounted at `/app/data` or switch to PostgreSQL.
+persistent, so the SQLite data (including staff accounts) resets on redeploy - the `admin` account is re-seeded
+from `ADMIN_PASSWORD`. For production, add a Render disk mounted at `/app/data` or switch to PostgreSQL.
 
 Alternatives that also work with the Dockerfile: Railway, Fly.io, Google Cloud Run, Azure Container Apps.
 
@@ -50,7 +50,12 @@ Alternatives that also work with the Dockerfile: Railway, Fly.io, Google Cloud R
 | `OPENAI_API_KEY` | - | OpenAI (or Groq) key |
 | `OPENAI_MODEL` | `gpt-4o-mini` | Model name |
 | `OPENAI_BASE_URL` | `https://api.openai.com/v1` | Set to `https://api.groq.com/openai/v1` for Groq |
-| `ADMIN_PASSWORD` | `admin123` | Staff dashboard password - **change it** |
+| `ADMIN_PASSWORD` | `admin123` | Initial password for the seeded `admin` staff account - **change it in the dashboard** |
 | `DATABASE_PATH` | `data/clinicflow.db` | SQLite file |
-| `CLINIC_NAME` | `Robina 7 Day Doctors (Demo)` | Shown in the header and confirmations |
+| `CLINIC_NAME` | `Robina 7 Day Doctors` | Shown in the header and confirmations |
 | `CLINIC_TIMEZONE` | `Australia/Brisbane` | Time zone for appointment slots |
+| `SMTP_HOST` | - | SMTP server for confirmation emails (blank = emails disabled) |
+| `SMTP_PORT` | `587` | SMTP port |
+| `SMTP_USER` / `SMTP_PASSWORD` | - | SMTP login (e.g. Gmail + App Password) |
+| `SMTP_FROM` | `SMTP_USER` | Sender address |
+| `SMTP_TLS` | `true` | Use STARTTLS |

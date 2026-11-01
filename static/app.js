@@ -5,14 +5,11 @@ const APPT = {
   standard: "Standard consultation (15 min)",
   telehealth: "Telehealth video/phone consultation",
 };
-const EXAMPLES = {
-  routine: ["Sore throat, runny nose and a mild temperature. Still eating and drinking fine.", "2 days"],
-  urgent: ["High fever of 39.5 degrees, bad cough and getting worse each day. Feeling very weak.", "3 days"],
-  long: ["Feeling anxious most days, low mood and I can't sleep. It's affecting my work.", "2 months"],
-  emergency: ["Crushing chest pain spreading to my left arm and I feel sweaty and sick.", "30 minutes"],
-};
 let intakeId = null;
 let selectedSlot = null;
+let lastTriage = null;
+let followUpDone = false;
+let fqQuestions = [];
 
 const escapeHtml = (s) => String(s).replace(/[&<>"']/g, (c) => ({ "&": "&amp;", "<": "&lt;", ">": "&gt;", '"': "&quot;", "'": "&#39;" }[c]));
 const list = (items) => (items && items.length ? `<ul class="tight">${items.map((i) => `<li>${escapeHtml(i)}</li>`).join("")}</ul>` : "-");
@@ -39,19 +36,8 @@ async function api(path, options = {}) {
 
 fetch("/api/config").then((r) => r.json()).then((c) => {
   $("clinic-name").textContent = `${c.clinic_name} - smart patient intake & booking`;
-  $("ai-badge").textContent = c.ai_provider === "offline" ? "AI: offline demo mode" : `AI: ${c.ai_provider} (prompt ${c.prompt_version})`;
+  $("ai-badge").textContent = c.ai_provider === "offline" ? "AI: offline" : `AI: ${c.ai_provider} (prompt ${c.prompt_version})`;
 });
-
-document.querySelectorAll("[data-example]").forEach((btn) =>
-  btn.addEventListener("click", () => {
-    const [symptoms, duration] = EXAMPLES[btn.dataset.example];
-    $("symptoms").value = symptoms;
-    $("duration").value = duration;
-    if (!$("patient_name").value) $("patient_name").value = "Alex Taylor";
-    if (!$("phone").value) $("phone").value = "0412 345 678";
-    if (!$("age").value) $("age").value = 42;
-  })
-);
 
 $("intake-form").addEventListener("submit", async (e) => {
   e.preventDefault();
@@ -85,6 +71,7 @@ $("intake-form").addEventListener("submit", async (e) => {
 });
 
 function renderResult(t) {
+  lastTriage = t;
   $("intake-section").classList.add("hidden");
   $("result-section").classList.remove("hidden");
   setStep(2);
@@ -96,14 +83,59 @@ function renderResult(t) {
   $("r-symptoms").innerHTML = list(t.key_symptoms);
   $("r-appointment").textContent = APPT[t.suggested_appointment] || t.suggested_appointment;
   $("r-questions").innerHTML = list(t.questions_for_doctor);
-  $("r-provider").textContent = t.ai_provider === "offline" ? "Offline rule engine (no AI key configured)" : `${t.ai_provider} LLM + safety rules`;
+  $("r-provider").textContent = t.ai_provider === "offline" ? "Rules-based triage engine" : `${t.ai_provider} LLM + safety rules`;
   if (t.urgency === "emergency") {
     $("emergency-alert").innerHTML = `CALL 000 NOW. Red flags detected: ${t.red_flags.map(escapeHtml).join(", ") || "possible emergency"}.`;
     $("emergency-alert").classList.remove("hidden");
+    $("followup-section").classList.add("hidden");
+    $("booking-section").classList.add("hidden");
+  } else if ((t.follow_up_questions || []).length && !followUpDone) {
+    renderFollowUp(t.follow_up_questions);
   } else {
     loadSlots();
   }
 }
+
+function renderFollowUp(questions) {
+  fqQuestions = questions;
+  $("fq-error").classList.add("hidden");
+  $("fq-list").innerHTML = questions.map((q, i) =>
+    `<label for="fq-${i}">${escapeHtml(q)}</label><input id="fq-${i}" maxlength="1000" />`
+  ).join("");
+  $("followup-section").classList.remove("hidden");
+  $("followup-section").scrollIntoView({ behavior: "smooth", block: "start" });
+}
+
+$("fq-submit").addEventListener("click", async () => {
+  const answers = fqQuestions
+    .map((q, i) => ({ question: q, answer: $(`fq-${i}`).value.trim() }))
+    .filter((a) => a.answer);
+  if (!answers.length) {
+    showError($("fq-error"), "Please answer at least one question, or skip to continue.");
+    return;
+  }
+  $("fq-error").classList.add("hidden");
+  const btn = $("fq-submit");
+  btn.disabled = true;
+  btn.innerHTML = '<span class="spinner"></span>AI is refining your assessment...';
+  try {
+    const data = await api(`/api/intakes/${intakeId}/follow-up`, { method: "POST", body: JSON.stringify({ answers }) });
+    followUpDone = true;
+    $("followup-section").classList.add("hidden");
+    renderResult(data.triage);
+  } catch (err) {
+    showError($("fq-error"), err.message);
+  } finally {
+    btn.disabled = false;
+    btn.textContent = "Submit answers";
+  }
+});
+
+$("fq-skip").addEventListener("click", () => {
+  followUpDone = true;
+  $("followup-section").classList.add("hidden");
+  renderResult(lastTriage);
+});
 
 async function loadSlots() {
   $("booking-section").classList.remove("hidden");

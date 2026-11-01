@@ -11,13 +11,17 @@ Areas covered: **Web application + AI automation + innovation**.
 ## Features
 - **AI triage**: Google Gemini (or OpenAI/Groq) turns free text into JSON: urgency, clinical summary, key symptoms,
   suggested appointment type, questions for the doctor and a friendly patient message.
+- **Adaptive AI interview**: the AI asks the patient 1-3 follow-up questions, then re-triages with the answers -
+  a red flag revealed in an answer still escalates to emergency. Answers are shown to staff on the dashboard.
 - **Safety first**: rule-based red-flag detector (chest pain, stroke, breathing, bleeding, anaphylaxis, suicide)
   always overrides the AI, shows "Call 000" and blocks online booking.
 - **Smart booking**: urgent patients only see today's and tomorrow's slots; no double-booking.
-- **Staff dashboard**: password-protected, stats, queue sorted by urgency, patient detail, status updates.
-- **Reliable AI**: JSON mode + schema validation + retry + offline fallback engine. The demo works even without an API key.
+- **Email confirmations**: staff approve a booking in the dashboard -> the patient gets a confirmation email (SMTP).
+- **Staff dashboard**: staff accounts with login, stats, queue sorted by urgency, patient detail,
+  add/edit/delete records and status updates.
+- **Reliable AI**: JSON mode + schema validation + retry + offline fallback engine. Works even without an API key.
 - **Prompt-injection defence** and a **prompt evaluation script** (12 cases, unsafe under-triage must be 0).
-- **Production basics**: Docker (non-root, health check), `render.yaml` one-click deploy, GitHub Actions CI, 20 tests.
+- **Production basics**: Docker (non-root, health check), `render.yaml` one-click deploy, GitHub Actions CI, 28 tests.
 
 ## Quick start
 ```bash
@@ -27,7 +31,7 @@ cp .env.example .env            # optional: add GEMINI_API_KEY (free at https://
 uvicorn app.main:app --reload
 ```
 - Patient app: http://localhost:8000
-- Staff dashboard: http://localhost:8000/admin (password = `ADMIN_PASSWORD`, default `admin123`)
+- Staff dashboard: http://localhost:8000/admin (log in as `admin` / `ADMIN_PASSWORD`, default `admin123`)
 - API docs: http://localhost:8000/docs
 
 Or with Docker: `docker compose up --build`
@@ -81,4 +85,4 @@ docs/            architecture, prompts, deployment, video script, interview guid
 - [Interview guide](docs/INTERVIEW_GUIDE.md)
 
 ## Disclaimer
-Demo project. ClinicFlow AI does not diagnose and is not a medical device. In an emergency in Australia call **000**.
+ClinicFlow AI does not diagnose and is not a medical device. In an emergency in Australia call **000**.
