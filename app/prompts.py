@@ -1,4 +1,4 @@
-"""Prompts used at runtime. See docs/PROMPT_DOCUMENTATION.md for how they evolved (v1 -> v3)."""
+"""Prompts used at runtime. PROMPT_VERSION tracks iterations (v1 -> v4)."""
 
 PROMPT_VERSION = "v4"
 

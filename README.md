@@ -69,7 +69,7 @@ app/
 static/          patient page + staff dashboard
 tests/           pytest suite
 scripts/         prompt evaluation
-docs/            architecture, prompts, deployment, video script, interview guide, screenshots
+docs/            architecture, deployment, screenshots
 ```
 
 ## Screenshots
@@ -78,11 +78,8 @@ docs/            architecture, prompts, deployment, video script, interview guid
 | ![](docs/screenshots/1-intake-form.png) | ![](docs/screenshots/4-emergency-detected.png) | ![](docs/screenshots/5-staff-dashboard.png) |
 
 ## Documentation
-- [Prompt documentation](docs/PROMPT_DOCUMENTATION.md): all prompts and how they evolved (v1 -> v3)
 - [Architecture](docs/ARCHITECTURE.md)
 - [Deployment guide](docs/DEPLOYMENT.md) (local, Docker, Render)
-- [Video script](docs/VIDEO_SCRIPT.md)
-- [Interview guide](docs/INTERVIEW_GUIDE.md)
 
 ## Disclaimer
 ClinicFlow AI does not diagnose and is not a medical device. In an emergency in Australia call **000**.
