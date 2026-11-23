@@ -46,7 +46,7 @@ Alternatives that also work with the Dockerfile: Railway, Fly.io, Google Cloud R
 |---|---|---|
 | `AI_PROVIDER` | `auto` | `auto`, `gemini`, `openai` or `offline` |
 | `GEMINI_API_KEY` | - | Google AI Studio key |
-| `GEMINI_MODEL` | `gemini-2.5-flash` | Any Gemini model name |
+| `GEMINI_MODEL` | `gemini-3.8-flash` | Any Gemini model name |
 | `OPENAI_API_KEY` | - | OpenAI (or Groq) key |
 | `OPENAI_MODEL` | `gpt-4o-mini` | Model name |
 | `OPENAI_BASE_URL` | `https://api.openai.com/v1` | Set to `https://api.groq.com/openai/v1` for Groq |
